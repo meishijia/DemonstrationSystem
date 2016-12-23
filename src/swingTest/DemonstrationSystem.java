@@ -9,13 +9,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.security.PublicKey;
+
 import java.security.SecureRandom;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
-import javax.sound.midi.VoiceStatus;
-import javax.swing.Action;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -34,8 +32,11 @@ import javax.swing.border.EtchedBorder;
 import encryptionAlgorithm.AESNew;
 import encryptionAlgorithm.Caesar;
 import encryptionAlgorithm.DESCBC;
+import encryptionAlgorithm.MD5;
 import encryptionAlgorithm.Playfair;
 import encryptionAlgorithm.RSA;
+import encryptionAlgorithm.SHA1;
+import encryptionAlgorithm.ThreeDES;
 import encryptionAlgorithm.Vigenere;
 
 public class DemonstrationSystem {
@@ -168,6 +169,30 @@ public class DemonstrationSystem {
 				});
         }
 	}
+	public class itemThreeDESHandler implements ActionListener{
+		public void actionPerformed(ActionEvent e){ 
+			 encrypt.addActionListener(new ActionListener() {
+					
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						String keyStr = key.getText();
+						String plainStr = plaintext.getText();
+						String cipherStr = ThreeDES.ThreeDESEncrypt(plainStr,keyStr);				
+						ciphertext.setText(cipherStr);
+					}
+				});
+				decrypt.addActionListener(new ActionListener() {
+					
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						String cipherStr = ciphertext.getText();
+						String keyStr = key.getText();
+						String plainStr = ThreeDES.ThreeDESDecrypt(cipherStr, keyStr);
+						plaintext.setText(plainStr);						
+					}
+				});
+        }
+	}
 	public class itemAESHandler implements ActionListener{
 		public void actionPerformed(ActionEvent e){ 
 			encrypt.addActionListener(new ActionListener() {
@@ -207,7 +232,7 @@ public class DemonstrationSystem {
 				}
 			});
         }
-	}
+	}	
 	public class itemRSAHandler implements ActionListener{
 		public void actionPerformed(ActionEvent e){
 			if(flag == 0){
@@ -295,6 +320,37 @@ public class DemonstrationSystem {
 		}
 	}
 	
+	public class itemMD5Handler implements ActionListener{
+		public void actionPerformed(ActionEvent e){
+			encrypt.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					String plainStr = plaintext.getText();
+					String cipherStr = MD5.getInstance().getMD5(plainStr);				
+					ciphertext.setText(cipherStr);
+				}
+			});
+		}		
+	}
+	public class itemSHA1Handler implements ActionListener{
+		public void actionPerformed(ActionEvent e){
+			encrypt.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					String plainStr = plaintext.getText();
+					String cipherStr = SHA1.hex_sha1(plainStr);				
+					ciphertext.setText(cipherStr);
+				}
+			});
+		}		
+	}
+
+	
+	
+	//文件选择器
+	
 	public class plainFileHandler implements ActionListener{
 		public void actionPerformed(ActionEvent e){
 			int result;
@@ -361,14 +417,15 @@ public class DemonstrationSystem {
 			if(result == JFileChooser.APPROVE_OPTION){
 				keyFile = fileChooser.getSelectedFile();
 			}
-	        if(keyFile.isDirectory()){  
-	            System.out.println("文件夹:"+keyFile.getAbsolutePath());  
-	            JOptionPane.showMessageDialog(null, "请选择文件而不是文件夹", 
-	            		"错误",JOptionPane.ERROR_MESSAGE);
-				return;
-	        }
+	        
 	        //将文件内容传到文本框中
 	        if(keyFile != null){
+	        	if(keyFile.isDirectory()){  
+		            System.out.println("文件夹:"+keyFile.getAbsolutePath());  
+		            JOptionPane.showMessageDialog(null, "请选择文件而不是文件夹", 
+		            		"错误",JOptionPane.ERROR_MESSAGE);
+					return;
+		        }
 	        	FileInputStream fileInStream = null;
 	        	try{
 					fileInStream = new FileInputStream(keyFile);			
@@ -414,14 +471,15 @@ public class DemonstrationSystem {
 			if(result == JFileChooser.APPROVE_OPTION){
 				cipherFile = fileChooser.getSelectedFile();
 			}
-	        if(cipherFile.isDirectory()){  
-	            System.out.println("文件夹:"+cipherFile.getAbsolutePath());  
-	            JOptionPane.showMessageDialog(null, "请选择文件而不是文件夹", 
-	            		"错误",JOptionPane.ERROR_MESSAGE);
-				return;
-	        }
+	        
 	        //将文件内容传到文本框中
 	        if(cipherFile != null){
+	        	if(cipherFile.isDirectory()){  
+		            System.out.println("文件夹:"+cipherFile.getAbsolutePath());  
+		            JOptionPane.showMessageDialog(null, "请选择文件而不是文件夹", 
+		            		"错误",JOptionPane.ERROR_MESSAGE);
+					return;
+		        }
 	        	FileInputStream fileInStream = null;
 	        	try{
 					fileInStream = new FileInputStream(cipherFile);			
@@ -517,26 +575,35 @@ public class DemonstrationSystem {
 				JMenu jm1 = new JMenu("经典加密");
 				JMenu jm2 = new JMenu("对称加密");
 				JMenu jm3 = new JMenu("非对称加密");
+				JMenu jm4 = new JMenu("散列算法");
 				mbar.add(jm1);
 				mbar.add(jm2);
 				mbar.add(jm3);
+				mbar.add(jm4);
 				
 				//菜单项
 				JMenuItem itemCaeser = new JMenuItem("凯撒加密");
 				JMenuItem itemPlayfair = new JMenuItem("PlayFair加密");
 				JMenuItem itemVigenere = new JMenuItem("维吉尼亚加密");
 				
-				JMenuItem itemDes = new JMenuItem("DES");	
+				JMenuItem itemDes = new JMenuItem("DES");
+				JMenuItem item3Des = new JMenuItem("3DES");
 				JMenuItem itemAes = new JMenuItem("AES");
 				
 				JMenuItem itemRsa = new JMenuItem("RSA");
+				
+				JMenuItem itemMD5 = new JMenuItem("MD5");
+				JMenuItem itemSHA1 = new JMenuItem("SHA1");
 				
 				jm1.add(itemCaeser);
 				jm1.add(itemPlayfair);
 				jm1.add(itemVigenere);
 				jm2.add(itemDes);
+				jm2.add(item3Des);
 				jm2.add(itemAes);
 				jm3.add(itemRsa);
+				jm4.add(itemMD5);
+				jm4.add(itemSHA1);
 				
 				jf.setVisible(true);
 				
@@ -609,13 +676,17 @@ public class DemonstrationSystem {
 				//处理DES加密 明文建议输入十六进制字符串 并且字符数是8个字节的倍数
 				itemDes.addActionListener(new itemDESHandler());
 				
-			
+				//处理3DES加密 明文建议输入8个字节的字符串，秘钥是24字节
+				item3Des.addActionListener(new itemThreeDESHandler());
 				
 				//处理AES加密 明文输入16个字节的整数倍的字符串，可以不是十六进制
 				itemAes.addActionListener(new itemAESHandler());
-				//处理RSA加密
-				
-				itemRsa.addActionListener(new itemRSAHandler());	
+				//处理RSA加密		
+				itemRsa.addActionListener(new itemRSAHandler());
+				//MD5消息摘要算法
+				itemMD5.addActionListener(new itemMD5Handler());
+				//SHA1
+				itemSHA1.addActionListener(new itemSHA1Handler());
 			}	
 	
 	
