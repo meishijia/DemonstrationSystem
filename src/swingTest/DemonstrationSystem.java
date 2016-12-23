@@ -307,14 +307,15 @@ public class DemonstrationSystem {
 			if(result == JFileChooser.APPROVE_OPTION){
 				plainFile = fileChooser.getSelectedFile();
 			}
-	        if(plainFile.isDirectory()){  
-	            System.out.println("文件夹:"+plainFile.getAbsolutePath());  
-	            JOptionPane.showMessageDialog(null, "请选择文件而不是文件夹", 
-	            		"错误",JOptionPane.ERROR_MESSAGE);
-				return;
-	        }
+	        
 	        //将文件内容传到文本框中
 	        if(plainFile != null){
+	        	if(plainFile.isDirectory()){  
+		            System.out.println("文件夹:"+plainFile.getAbsolutePath());  
+		            JOptionPane.showMessageDialog(null, "请选择文件而不是文件夹", 
+		            		"错误",JOptionPane.ERROR_MESSAGE);
+					return;
+		        }
 	        	FileInputStream fileInStream = null;
 	        	try{
 					fileInStream = new FileInputStream(plainFile);			

@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 public class Caesar {
 	public static String encryptCaesar(String plaintext,String number1) {
-		String newstr = plaintext.toUpperCase();
+		String newstr = plaintext.replaceAll(" ","").toUpperCase();
 		int number = Integer.valueOf(number1).intValue();
 		char[] slist = newstr.toCharArray();
 		for(int i = 0;i < slist.length;i++){
@@ -14,7 +14,7 @@ public class Caesar {
 		return ciphertext;
 	}
 	public static String decryptCaesar(String ciphertext,String number1){
-		String newstr = ciphertext.toUpperCase();
+		String newstr = ciphertext.replaceAll(" ","").toUpperCase();
 		int number = Integer.valueOf(number1).intValue();
 		char[] slist = newstr.toCharArray();
 		for(int i = 0;i < slist.length;i++){

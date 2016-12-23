@@ -108,7 +108,7 @@ public class Playfair {
 	//3,如果不在不同的行和列，则用两个角上的字母代换，先用第一个字母的行，第二个字母的列代换
 	public static String playFairEncrypt(String plaintext,String key){
 		char[] plain1 = plaintext.replaceAll(" ","").toLowerCase().toCharArray();
-		char[] key1 = key.replaceAll(" ","").toCharArray();
+		char[] key1 = key.replaceAll(" ","").toLowerCase().toCharArray();
 		char[][] matrix = constructMatrix(key1);
 		char[] plain = dealPlain(plain1);
 		CharBuffer cipher = CharBuffer.allocate(plain.length);
@@ -146,8 +146,8 @@ public class Playfair {
 	}
 	//解密
 	public static String playFairDecrypt(String ciphertext,String key){
-		char[] cipher = ciphertext.replaceAll(" ","").toCharArray();
-		char[] key1 = key.replaceAll(" ","").toCharArray();
+		char[] cipher = ciphertext.replaceAll(" ","").toLowerCase().toCharArray();
+		char[] key1 = key.replaceAll(" ","").toLowerCase().toCharArray();
 		char[][] matrix = constructMatrix(key1);
 		CharBuffer plain = CharBuffer.allocate(cipher.length);
 		int[] pos1 = new int[2];

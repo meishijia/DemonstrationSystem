@@ -6,8 +6,8 @@ import java.util.Scanner;
 public class Vigenere {
 	//维吉尼亚密码表明文字符为行数，密文字符为列数
 	public static String vigenereEncrypt(String plaintext,String keytext) {
-		String plaintext1 = plaintext.toUpperCase();
-		String keytext1 = keytext.toUpperCase();
+		String plaintext1 = plaintext.replaceAll(" ","").toUpperCase();
+		String keytext1 = keytext.replaceAll(" ","").toUpperCase();
 		char[] plain = plaintext1.toCharArray();
 		char[] key = keytext1.toCharArray();
 		CharBuffer cipher = CharBuffer.allocate(plain.length);
@@ -31,8 +31,8 @@ public class Vigenere {
 	}
 	//解密
 	public static String vigenereDecrypt(String ciphertext,String keytext){
-		String ciphertext1 = ciphertext.toUpperCase();
-		String keytext1 = keytext.toUpperCase();
+		String ciphertext1 = ciphertext.replaceAll(" ","").toUpperCase();
+		String keytext1 = keytext.replaceAll(" ","").toUpperCase();
 		char[] cipher = ciphertext1.toCharArray();
 		char[] key = keytext1.toCharArray();
 		CharBuffer plain = CharBuffer.allocate(cipher.length);
