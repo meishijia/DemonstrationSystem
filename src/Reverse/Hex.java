@@ -18,8 +18,10 @@ public class Hex {
     public static char[] encodeHex(byte[] data, boolean toLowerCase) {
         return encodeHex(data, toLowerCase ? DIGITS_LOWER : DIGITS_UPPER);
     }
+    //byte类型8bit，用十六进制字符串表示需要两个十六进制字符，就用到了两个char类型
     protected static char[] encodeHex(byte[] data, char[] toDigits) {
         int l = data.length;
+        //l << 1 相当于乘以2吧
         char[] out = new char[l << 1];
         // two characters form the hex value.
         for (int i = 0, j = 0; i < l; i++) {
@@ -28,6 +30,7 @@ public class Hex {
         }
         return out;
     }
+    //将byte数组转换成十六进制字符串
     public static String encodeHexStr(byte[] data) {
         return encodeHexStr(data, true);
     }
@@ -63,7 +66,7 @@ public class Hex {
         return digit;
     }
     public static void main(String[] args) {
-        String srcStr = "待转换字符串";
+        String srcStr = "abc";
         String encodeStr = encodeHexStr(srcStr.getBytes());
         String decodeStr = new String(decodeHex(encodeStr.toCharArray()));
         System.out.println("转换前：" + srcStr);

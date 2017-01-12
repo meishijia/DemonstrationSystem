@@ -53,7 +53,7 @@ public class Vigenere {
 			}
 		}
 		String str = new String(plain.array());	
-		return str;
+		return str.toLowerCase();
 	}
 	public static void main(String[] args) {
 		Scanner s = new Scanner(System.in);

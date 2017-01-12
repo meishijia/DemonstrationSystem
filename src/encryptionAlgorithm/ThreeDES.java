@@ -42,9 +42,9 @@ public class ThreeDES {
 	   return null;
    }
     
-    //加密密钥，长度为24字节,明文应该是8字节的的倍数
+    //加密密钥，长度为24字节,明文长度随意
    public static void main(String[] args) throws Exception {
-       String plaintext ="woshimeishijiaxx";
+       String plaintext ="woshimeishijia";
        String keytext = "123456788765432112345678";
        String ciphertext = ThreeDESEncrypt(plaintext, keytext);
        System.out.println("密文："+ciphertext);

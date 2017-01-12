@@ -2,7 +2,7 @@ package encryptionAlgorithm;
 
 public class MD5{
     /*
-    *四个链接变量
+    *四个初始化链接变量，这些参数用于第一轮的运算
     */
     private final int A=0x67452301;
     private final int B=0xefcdab89;
@@ -56,7 +56,9 @@ public class MD5{
         return(a<<s)|(a>>>(32-s));//右移的时候，高位一定要补零，而不是补充符号位
     }
     /*
-    *主循环
+    *主循环有四轮
+    *四轮循环运算：循环的次数是分组的个数（N+1） 512位分成16组，每组64位
+    *
     */
     private void MainLoop(int M[]){
         int F,g;
@@ -93,7 +95,7 @@ public class MD5{
     /*
     *填充函数
     *处理后应满足bits≡448(mod512),字节就是bytes≡56（mode64)
-    *填充方式为先加一个0,其它位补零
+    *填充方式为先加一个1,其它位补零
     *最后加上64位的原来长度
     */
     private int[] add(String str){
@@ -119,6 +121,7 @@ public class MD5{
     public String getMD5(String source){
         init();
         int strByte[]=add(source);
+        //512位是64个字节、int型为4字节，所以有十六个整数
         for(int i=0;i<strByte.length/16;i++){
         	int num[]=new int[16];
         	for(int j=0;j<16;j++){

@@ -29,8 +29,7 @@ public class DESCBC {
     // High-level permutations
 
     /**
-     * Input Permutation.  The message block is permuted by this
-     * permutation at the beginning of the algorithm.
+     * 初始矩阵，与明文进行初始置换。
      */
     private static final byte[] IP = {
             58, 50, 42, 34, 26, 18, 10, 2,
@@ -44,8 +43,7 @@ public class DESCBC {
     };
 
     /**
-     * Final Permutation.  The final result is permuted by this
-     * permutation to generate the final ciphertext block.
+     * 初始矩阵的逆矩阵
      */
     private static final byte[] FP = {
             40, 8, 48, 16, 56, 24, 64, 32,
@@ -64,6 +62,7 @@ public class DESCBC {
      * Expansion Permutation.  The Feistel function begins by applying
      * this permutation to its 32-bit input half-block to create an
      * "expanded" 48-bit value.
+     * 将32位数据扩展成48为数据（针对明文）
      */
     private static final byte[] E = {
             32, 1, 2, 3, 4, 5,
@@ -234,7 +233,7 @@ public class DESCBC {
         long dst = 0;
         for (int i = 0; i < table.length; i++) {
             int srcPos = srcWidth - table[i];
-            dst = (dst << 1) | (src >> srcPos & 0x01);
+            dst = (dst << 1) | ((src >> srcPos) & 0x01);
         }
         return dst;
     }
@@ -243,11 +242,12 @@ public class DESCBC {
      * Permute the supplied 6-bit value based on the S-Box at the
      * specified box number.  (Box numbers start at 1, to be consistent
      * with the literature.)
-     * S盒，将6位数据压缩成4位，src = d1d2d3d4dd5d6 行=d1d6 列=d2d3d4d5 
+     * S盒，将6位数据压缩成4位，src = d1d2d3d4d5d6 行=d1d6 列=d2d3d4d5 
      */
     private static byte S(int boxNumber, byte src) {
         // The first aindex based on the following bit shuffle:
         // abcdef => afbcde 
+    	// 0x20=100000,0x01=000001,0x1E=011110
         src = (byte) (src & 0x20 | ((src & 0x01) << 4) | ((src & 0x1E) >> 1));
         return S[boxNumber - 1][src];
     }
@@ -310,6 +310,7 @@ public class DESCBC {
         // 2. key mixing 每一轮的秘钥（48位）与 前面被扩展的48异或
         long x = e ^ subkey;
         // 3. substitution  将48bits分成8组6bits的数据经过8个s盒压缩成32bits
+        //0x3F=00111111
         int dst = 0;
         for (int i = 0; i < 8; i++) {
             dst >>>= 4;
@@ -333,8 +334,8 @@ public class DESCBC {
         key = PC1(key);
 
         // split into 28-bit left and right (c and d) pairs.
-        int c = (int) (key >> 28);
-        int d = (int) (key & 0x0FFFFFFF);
+        int c = (int) (key >> 28);//左28位
+        int d = (int) (key & 0x0FFFFFFF);//右28位
 
         // for each of the 16 needed subkeys, perform a bit
         // rotation on each 28-bit keystuff half, then join
@@ -510,7 +511,7 @@ public class DESCBC {
     // for providing confidence in this DES implementation.
     //
     //////////////////////////////////////////////////////////////////////
-
+    //nibble 半字节
     private static int charToNibble(char c) {
         if (c >= '0' && c <= '9') {
             return (c - '0');
@@ -581,9 +582,9 @@ public class DESCBC {
     	byte[] plainBytes = parseBytes(plaintext);
     	String keyConv = convertStringToHex(keyStr);
     	byte[] keyBytes = parseBytes(keyConv);
-    	byte[] result = encryptCBC(plainBytes, keyBytes);
+    	byte[] result = encrypt(plainBytes, keyBytes);
     	String resultStr = hex(result);
-    	return resultStr;
+    	return resultStr.replaceAll(" ","");
     }
     /**
      * by @meishijia
@@ -595,10 +596,10 @@ public class DESCBC {
     	byte[] keyBytes = parseBytes(keyConv);
     	byte[] plainBytes = decrypt(cipherBytes,keyBytes);
     	String resultStr =  hex(plainBytes);
-    	return resultStr;		
+    	return resultStr.replaceAll(" ","").toLowerCase();		
 	}
     /*只能加密十六进制字符串咯*/
-    public static void main(String[] args) {
+    /*public static void main(String[] args) {
     	String oriText = "f3ed a6dc f8b7 9dd6 5be0 db8b 1e7b a551";
     	//String oriText = "meishijia";
     	//String key = convertStringToHex("mypass");
@@ -615,82 +616,8 @@ public class DESCBC {
     	String decResult = hex(decryptCBC(encResult,keys));
     	System.out.println("Decryption result:  " + decResult);
     	
-        // These tests were derived from the password challenge-response
-        // conversations observed between a VNC client and server.
-//        test(
-//    	   		parseBytes("a4b2 c9ef 0876 c1ce 438d e282 3820 dbde"),
-//    	   		parseBytes("fa60 69b9 85fa 1cf7 0bea a041 9137 a6d3"),
-//    	   		"mypass"
-//        );
-//        test(
-//                parseBytes("f3ed a6dc f8b7 9dd6 5be0 db8b 1e7b a551"),
-//                parseBytes("b669 d033 6c3f 42b7 68e8 e937 b4a5 7546"),
-//                "mypass"
-//        );
-//
-//        // This is the example from "The DES Algorithm Illustrated"
-//        // by J. Orlin Grabbe, and his step-by-step walkthrough
-//        // is invaluable for debugging the internals of your
-//        // DES calculations:
-//        //     http://orlingrabbe.com/des.htm
-//        test(
-//                parseBytes("0123456789ABCDEF"),
-//                parseBytes("85E813540F0AB405"),
-//                parseBytes("133457799BBCDFF1")
-//        );
-//
-    }
+*/
 
-    //******************************************************************************************************************
-
-
-    // The parts below were added
-
-    //  Initial Vector
-    private static long IV;
-
-    public static long getIv() {
-        return IV;
-    }
-
-    public static void setIv(long iv) {
-        IV = iv;
-    }
-
-
-    // ENCRYPT with CBC ---------------------------------------------------------------------------------------------
-
-    /**
-     * Encrypt the supplied message with the provided key, and return
-     * the ciphertext.  If the message is not a multiple of 64 bits
-     * (8 bytes), then it is padded with zeros.
-     * <p/>
-     * This method uses the Cypher Block Chaining mode (CBC) mode of
-     * operation -- each 64-bit block is XORed with the previous ciphertext
-     * before being encrypted with the same key.
-     */
-    public static byte[] encryptCBC(byte[] message, byte[] key) {
-        byte[] ciphertext = new byte[message.length];
-        long k = getLongFromBytes(key, 0);
-        long previousCipherBlock = IV;
-
-        for (int i = 0; i < message.length; i += 8) {
-            // get the message block to be encrypted (8bytes = 64bits)
-            long messageBlock = getLongFromBytes(message, i);
-
-            // XOR message block with previous cipherblock and encrypt
-            // First previousCiphertext = Initial Vector (IV)
-            long cipherBlock = encryptBlock(messageBlock ^ previousCipherBlock, k);
-
-            // Store the cipherBlock in the correct position in ciphertext
-            getBytesFromLong(ciphertext, i, cipherBlock);
-
-            // Update previousCipherBlock
-            previousCipherBlock = cipherBlock;
-        }
-
-        return ciphertext;
-    }
 
 
     // ALL DECRYPTION FUNCTIONS -----------------------------------------------------------------------------------------
@@ -769,37 +696,5 @@ public class DESCBC {
     }
 
 
-    /**
-     * Decrypt the supplied ciphertext with the provided key, and return
-     * the message.  If the ciphertext is not a multiple of 64 bits
-     * (8 bytes), then it is padded with zeros.
-     * <p/>
-     * This method uses the Cypher Block Chaining mode (CBC) mode of
-     * operation -- each 64-bit block is XORed with the previous ciphertext
-     * after being decrypted with the same key.
-     */
-    public static byte[] decryptCBC(byte[] ciphertext, byte[] key) {
-        byte[] message = new byte[ciphertext.length];
-        long k = getLongFromBytes(key, 0);
-        long previousCipherBlock = IV;
-
-        for (int i = 0; i < ciphertext.length; i += 8) {
-            // get the cipher block to be decrypted (8bytes = 64bits)
-            long cipherBlock = getLongFromBytes(ciphertext, i);
-
-            // Decrypt the cipher block and XOR with previousCipherBlock
-            // First previousCiphertext = Initial Vector (IV)
-            long messageBlock = decryptBlock(cipherBlock, k);
-            messageBlock = messageBlock ^ previousCipherBlock;
-
-            // Store the messageBlock in the correct position in message
-            getBytesFromLong(message, i, messageBlock);
-
-            // Update previousCipherBlock
-            previousCipherBlock = cipherBlock;
-        }
-
-        return message;
-    }
 }
 

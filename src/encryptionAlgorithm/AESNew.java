@@ -2,7 +2,6 @@ package encryptionAlgorithm;
 
 public class AESNew {
 	private final int Nb = 4;
-	//private final int WORD = 4;
 	private int Nk;// 秘钥长度
 	private int Nr;// 变化轮次
 	private byte[] key;// 秘钥
@@ -183,6 +182,7 @@ public class AESNew {
 	 * @param b Byte to perform xtime operation on.
 	 * 
 	 * @return Returns b left shifted, with a conditional XOR with 0x1b.
+	 * 0x80=00001000,0x1b=00011011
 	 */
 	static private byte xtime(byte b) {
 		if ((b & (byte) 0x80) != 0)

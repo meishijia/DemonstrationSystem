@@ -21,7 +21,7 @@ public class Caesar {
 			slist[i] = (char) (((slist[i]-65 - number) % 26) + 65);
 		}
 		String plaintext = new String(slist);
-		return plaintext;
+		return plaintext.toLowerCase();
 	}
 	public static void main(String[] args){
 		

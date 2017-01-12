@@ -142,7 +142,7 @@ public class Playfair {
 			}	
 		}
 		String str = new String(cipher.array());
-		return str;
+		return str.toUpperCase();
 	}
 	//Ω‚√‹
 	public static String playFairDecrypt(String ciphertext,String key){

@@ -17,7 +17,9 @@ public class RSA {
 		String plaintext = "meishijia";
 		byte[][] keyPair = keyPairGenerator();
 		String publicKey = getPublicKey(keyPair);
+		System.out.println(publicKey);
 		String privateKey = getPrivateKey(keyPair);
+		System.out.println(privateKey);
 		System.out.println("公钥加密，私钥解密————加密:");
 		String cipher = rsaPublicEncrypt(plaintext, publicKey);
 		System.out.println(cipher);
